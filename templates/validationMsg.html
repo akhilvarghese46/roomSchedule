@@ -1,0 +1,26 @@
+{% extends "main.html" %}
+{% block content %}
+<div id="errorMsg" class="errorMsgdiv">
+  <div class="msg-content validatemsg">
+    <span class="close">&times;</span>
+    <p>{{ error_message }}hhhhhhhhhhhhhh</p>
+    <p><button class="btncreate btn valbtn">OK</button></p>
+  </div>
+</div>
+
+{% endblock %}
+{% block js %}
+<script>
+  var errorMsg = document.getElementById("errorMsg");
+  var span = document.getElementsByClassName("close")[0];
+  errorMsg.style.display = "block";
+  span.onclick = function() {
+    errorMsg.style.display = "none";
+  }
+  window.onclick = function(event) {
+    if (event.target == errorMsg) {
+      errorMsg.style.display = "none";
+    }
+  }
+</script>
+{% endblock %}
