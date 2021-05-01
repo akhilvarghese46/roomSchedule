@@ -1,10 +1,11 @@
 
 class Room():
-    def __init__(self, name, type, price, req):
+    def __init__(self, name, type, price, req, adminname):
         self.name = name
         self.type = type
         self.price = price
         self.req = req
+        self.adminname = adminname
 
     def set_properties(self, name, value):
         setattr(self, name, value)

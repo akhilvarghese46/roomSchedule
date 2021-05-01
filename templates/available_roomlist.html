@@ -1,0 +1,38 @@
+{% extends 'main.html' %}
+{% block content %}
+<form method="post" action="">
+  <table border="1" style="border-collapse:collapse;table-layout: fixed; word-wrap: break-word;">
+    <colgroup>
+      <col span="1" style="width: 30%;">
+      <col span="1" style="width: 28%;">
+      <col span="1" style="width: 35%;">
+      <!---<col span="1" style="width: 25%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 25%;">
+    <col span="1" style="width: 25%;">--->
+      <col span="1" style="width: 25%;">
+    </colgroup>
+    <tr>
+      <th>Room Name</th>
+      <th>Room Price</th>
+      <th>Room Type</th>
+      <th>Select</th>
+    </tr>
+    {% for room in rooms %}
+
+    <tr>
+      <td> {{room.name}}</td>
+      <td>{{room.price}}</td>
+      <td>{{room.type}}</td>
+
+      <td>
+        <a href="/availableroomdetails/{{room.name}}">Select Room</a>
+      </td>
+    </tr>
+    {% endfor %}
+
+  </table>
+</form>
+{% endblock %}
