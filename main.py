@@ -99,7 +99,6 @@ def getAvailableRoomList():
         try:
             name_list = getAvailableRoomData();
             return render_template("available_roomlist.html", user_data=user_data, rooms=name_list)
-
         except ValueError as exc:
             error_message = str(exc)
             return render_template("error.html", error_message=error_message)
@@ -158,10 +157,11 @@ def addRoomBookToDb():
             roomData = data.get("roomData")
             roomData = roomData.replace("'", "\"")
             roomData=json.loads(roomData)
-            name=roomData["name"]
-            entity_key = datastore_client.key("BookingRoomList")
+            name =roomData["name"]
+            bookingKey = name+"|"+booking['fromDate']+"|"+booking['toDate']+"|"+user_data['email']
+            entity_key = datastore_client.key("BookingRoomList",bookingKey)
             entity = datastore.Entity(key=entity_key)
-            booking = Booking(rmname= name, type = roomData["type"], price=roomData["price"], req = roomData["req"],adduserfecilitiese=data.get("addUserReq"), startdate =booking['fromDate'], enddate=booking['toDate'], loginusername = user_data['email'])
+            booking = Booking(bookingKey=bookingKey, rmname= name, type = roomData["type"], price=roomData["price"], req = roomData["req"],adduserfecilitiese=data.get("addUserReq"), startdate =booking['fromDate'], enddate=booking['toDate'], loginusername = user_data['email'])
             entity.update(booking.__dict__)
             datastore_client.put(entity)
             return render_template("search_booking.html")
@@ -179,6 +179,31 @@ def getBookedRoomList():
         try:
             name_list=getBookedRoomListDetails();
             return render_template("bookedroomlist.html" ,userdata=user_data, BookedRoomData=name_list)
+        except ValueError as exc:
+            error_message = str(exc)
+            return render_template("error.html", error_message=error_message)
+    else:
+        error_message = "Page not loaded! User Data is missing"
+        return render_template("error.html", error_message=error_message)
+
+@app.route("/editbookederoom/<name>", methods=["GET", "POST"])
+def editBookedRoom(name=None):
+    return render_template("edit_booking.html")
+
+@app.route("/deletebookederoom/<id>", methods=["GET", "POST"])
+def deleteBookedRoom(id=None):
+    user_data =checkUserData();
+    if user_data != None:
+        try:
+            if id != None:
+                name_list = []
+                entity_key = datastore_client.key("BookingRoomList", id)
+                datastore_client.delete(key=entity_key)
+                name_list=getBookedRoomListDetails();
+                return render_template("bookedroomlist.html", user_data=user_data, BookedRoomData=name_list)
+            else:
+                error_message = "Page not loaded! User Data is missing"
+                return render_template("error.html", error_message=error_message)
         except ValueError as exc:
             error_message = str(exc)
             return render_template("error.html", error_message=error_message)

@@ -21,7 +21,8 @@ class User():
         setattr(self, name, value)
 
 class Booking():
-    def __init__(self, rmname, type, price, req, adduserfecilitiese, startdate, enddate, loginusername):
+    def __init__(self, bookingKey, rmname, type, price, req, adduserfecilitiese, startdate, enddate, loginusername):
+        self.bookingKey = bookingKey
         self.rmname = rmname
         self.type = type
         self.price = price

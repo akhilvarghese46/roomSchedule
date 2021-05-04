@@ -22,6 +22,7 @@
       <th>Select</th>
       <th>Delete</th>
     </tr>
+    {%print(BookedRoomData)%}
     {% if BookedRoomData|length == 0 %}
     <tr>
       <td colspan="5" style="text-align: center;"> ------ No GPU Data found ------ </td>
@@ -36,8 +37,8 @@
       {%print(userdata['email'])%}
       {%print(room.loginusername)%}
       {%if userdata['email']==room.loginusername%}
-      <td><a href="/editbookederoom/{{room.rmname}}">Edit</a></td>
-      <td><a href="/deletebookederoom/{{room.rmname}}">Delete</a></td>
+      <td><a href="/editbookederoom/{{room.bookingKey}}">Edit</a></td>
+      <td><a href="/deletebookederoom/{{room.bookingKey}}">Delete</a></td>
       {% else: %}
       <td></td>
       <td></td>

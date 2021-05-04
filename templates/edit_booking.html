@@ -1,0 +1,37 @@
+{% extends 'main.html' %}
+{% block content %}
+<form method="post" action="">
+  <h3>Update Room Booking</h3>
+  <table>
+    <tr>
+      <td>From Date:</td>
+      <td><label name="lblFromDate"></label></td>
+    </tr>
+    <tr>
+      <td>To Date:</td>
+      <td><label name="lblToDate"></label></td>
+    </tr>
+    <tr>
+      <td>Room Type:</td>
+      <td><label name="lblrmType"></td>
+    </tr>
+    <tr>
+      <td>Room Price:</td>
+      <td><label name="lblrmPrice"></td>
+    </tr>
+    <tr>
+      <td>Additional Facilities:</td>
+      <td><label name="lblrmPrice"></td>
+    </tr>
+    <tr>
+      <td>Additional Requirements:</td>
+      <td><textarea id="addReq" name="addReq" rows="4" cols="50" maxlength="150"></textarea></td>
+    </tr>
+
+    <tr>
+      <td></td>
+      <td><button class="btncreate btn">Update Room</button></td>
+    </tr>
+  </table>
+</form>
+{% endblock %}
