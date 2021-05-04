@@ -4,8 +4,8 @@ import google.oauth2.id_token
 from datetime import datetime
 import random
 from google.cloud import datastore
-
-from models import Room
+import json
+from models import Room,Booking
 
 app = Flask(__name__)
 datastore_client = datastore.Client()
@@ -26,10 +26,28 @@ def checkUserData():
 
 def getAvailableRoomData():
     name_list = []
+    query = datastore_client.query(kind="Room")
+    query = query.add_filter('isbooked', '=', 0).fetch()
+    for i in query:
+        name_list.append(dict(i))
+    return name_list
+
+def getBookingRoomFilter(bookData):
+    name_list = []
     query = datastore_client.query(kind="Room").fetch()
     for i in query:
         name_list.append(dict(i))
     return name_list
+
+def getRoomDetails(rmname):
+    entity_key = datastore_client.key("Room", rmname)
+    enitity_exists = datastore_client.get(key=entity_key)
+    if enitity_exists:
+        enitity_exists = dict(enitity_exists)
+        enitity_exists["name"] = rmname
+    else:
+        return render_template("error.html", error_message="No data found")
+    return enitity_exists
 
 #root function is a default function
 @app.route('/')
@@ -85,6 +103,72 @@ def getAvailableRoomList():
         error_message = "Page not loaded! User Data is missing"
         return render_template("index.html", user_data=user_data, error_message=error_message)
 
+@app.route("/addroombookingSearch", methods=["GET", "POST"])
+def getRoomBookingSearch():
+
+    return render_template("search_booking.html")
+
+@app.route("/addRoomBookSearchResult", methods=["GET", "POST"])
+def getRoomBookingSearchResult():
+    user_data =checkUserData();
+    if user_data != None:
+        try:
+            data = dict(request.form)
+            fromDate = data.get("fromDate")
+            toDate = data.get("toDate")
+            rmType  = data.get("roomType")
+            booking={}
+            booking["fromDate"] = fromDate
+            booking["toDate"] = toDate
+            booking["rmType"] = rmType
+            name_list = getBookingRoomFilter(booking)
+            return render_template("search_bookinglist.html",booking=booking ,avlRoom = name_list)
+        except ValueError as exc:
+            error_message = str(exc)
+            return render_template("error.html", error_message=error_message)
+    else:
+        error_message = "Page not loaded! User Data is missing"
+        return render_template("index.html", user_data=user_data, error_message=error_message)
+
+@app.route("/addRoomBook", methods=["GET", "POST"])
+def setRoomBooking():
+    rmname = request.args.get('room')
+    booking = request.args.get('booking')
+    booking = booking.replace("'", "\"")
+    booking=json.loads(booking)
+    booking["rmname"] = rmname
+    if rmname:
+        name_list = getRoomDetails(rmname)
+        return render_template("add_booking.html" ,roomData = name_list,booking=booking)
+    else:
+        return render_template("search_booking.html")
+
+@app.route("/addRoomBookToDb", methods=["GET", "POST"])
+def addRoomBookToDb():
+    user_data =checkUserData();
+    if user_data != None:
+        try:
+            data = dict(request.form)
+            bookingdata = data.get("booking")
+            bookingdata = bookingdata.replace("'", "\"")
+            booking=json.loads(bookingdata)
+            roomData = data.get("roomData")
+            roomData = roomData.replace("'", "\"")
+            roomData=json.loads(roomData)
+            name=roomData["name"]
+            entity_key = datastore_client.key("BookingRoomList", name)
+            entity = datastore.Entity(key=entity_key)
+            booking = Booking(rmname= name, type = roomData["type"], price=roomData["price"], req = roomData["req"],adduserfecilitiese=data.get("addUserReq"), startdate =booking['fromDate'], enddate=booking['toDate'], loginusername = user_data['email'])
+            entity.update(booking.__dict__)
+            datastore_client.put(entity)
+            return render_template("search_booking.html")
+        except ValueError as exc:
+            error_message = str(exc)
+            return render_template("error.html", error_message=error_message)
+    else:
+        error_message = "Page not loaded! User Data is missing"
+        return render_template("error.html", error_message=error_message)
+        
 @app.route("/singnout", methods=["GET", "POST"])
 def signOut():
     return render_template("index.html")

@@ -6,6 +6,7 @@ class Room():
         self.price = price
         self.req = req
         self.adminname = adminname
+        self.isbooked = 0
 
     def set_properties(self, name, value):
         setattr(self, name, value)
@@ -20,13 +21,15 @@ class User():
         setattr(self, name, value)
 
 class Booking():
-    def __init__(self, name, type, price, req, startdate, enddate):
-        self.name = name
+    def __init__(self, rmname, type, price, req, adduserfecilitiese, startdate, enddate, loginusername):
+        self.rmname = rmname
         self.type = type
         self.price = price
         self.req = req
+        self.adduserfecilitiese = adduserfecilitiese
         self.startdate = startdate
         self.enddate = enddate
+        self.loginusername = loginusername
 
     def set_properties(self, name, value):
         setattr(self, name, value)
