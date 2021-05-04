@@ -32,6 +32,13 @@ def getAvailableRoomData():
         name_list.append(dict(i))
     return name_list
 
+def getBookedRoomListDetails():
+    name_list = []
+    query = datastore_client.query(kind="BookingRoomList").fetch()
+    for i in query:
+        name_list.append(dict(i))
+    return name_list
+
 def getBookingRoomFilter(bookData):
     name_list = []
     query = datastore_client.query(kind="Room").fetch()
@@ -60,7 +67,6 @@ def root():
         name_list = getAvailableRoomData();
         return render_template("main.html", user_data=user_data,rooms=name_list)
 
-
 @app.route("/addroom", methods=["GET", "POST"])
 def setRoomDetails():
     user_data =checkUserData();
@@ -81,12 +87,10 @@ def setRoomDetails():
             else:
                 error_message = "an entry with same name already exists. try with an another name"
                 return render_template("error.html", error_message=error_message)
-
         return render_template("add_room.html")
     else:
         error_message = "Page not loaded! User Data is missing"
         return render_template("index.html", user_data=user_data, error_message=error_message)
-
 
 @app.route("/availableroomlist", methods=["GET", "POST"])
 def getAvailableRoomList():
@@ -105,7 +109,6 @@ def getAvailableRoomList():
 
 @app.route("/addroombookingSearch", methods=["GET", "POST"])
 def getRoomBookingSearch():
-
     return render_template("search_booking.html")
 
 @app.route("/addRoomBookSearchResult", methods=["GET", "POST"])
@@ -156,7 +159,7 @@ def addRoomBookToDb():
             roomData = roomData.replace("'", "\"")
             roomData=json.loads(roomData)
             name=roomData["name"]
-            entity_key = datastore_client.key("BookingRoomList", name)
+            entity_key = datastore_client.key("BookingRoomList")
             entity = datastore.Entity(key=entity_key)
             booking = Booking(rmname= name, type = roomData["type"], price=roomData["price"], req = roomData["req"],adduserfecilitiese=data.get("addUserReq"), startdate =booking['fromDate'], enddate=booking['toDate'], loginusername = user_data['email'])
             entity.update(booking.__dict__)
@@ -168,7 +171,21 @@ def addRoomBookToDb():
     else:
         error_message = "Page not loaded! User Data is missing"
         return render_template("error.html", error_message=error_message)
-        
+
+@app.route("/bookedroomlist", methods=["GET", "POST"])
+def getBookedRoomList():
+    user_data =checkUserData();
+    if user_data != None:
+        try:
+            name_list=getBookedRoomListDetails();
+            return render_template("bookedroomlist.html" ,userdata=user_data, BookedRoomData=name_list)
+        except ValueError as exc:
+            error_message = str(exc)
+            return render_template("error.html", error_message=error_message)
+    else:
+        error_message = "Page not loaded! User Data is missing"
+        return render_template("error.html", error_message=error_message)
+
 @app.route("/singnout", methods=["GET", "POST"])
 def signOut():
     return render_template("index.html")
