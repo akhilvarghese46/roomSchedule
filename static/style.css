@@ -2,15 +2,49 @@ body {
   font-family: "helvetica", sans-serif;
   justify-content: center;
   align-items: center;
-  background: #d1d3d2;
+  /*background: #d1d3d2;*/
+  background-image: url(/static/bgroompic.jpg);
+  position: relative;
+  /*opacity: 0.65;*/
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.datadiv {
+  font-size: 1em;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #a7a7a7;
+  width: 100%;
+  border: #a7a7a7;
+  border-radius: 7px;
+  opacity: .9;
+}
+
+h4 {
+  text-align: center;
+  font-size: 2em;
+  font-weight: 600;
+  width: 100%;
+}
+
+h3 {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: 600;
+  /* color: #f80707; */
+  /* background-color: #68e3e3; */
+  width: 97%;
+  border: 15px solid #a7a7a7;
+  border-radius: 7px;
 }
 
 .maindiv {
-  width: 390px;
+  width: 92%;
+  height: 88%;
   position: fixed;
   top: 50%;
   left: 50%;
-  background: #fff;
   border-radius: 10px;
   overflow: hidden;
   padding: 77px 55px 33px 55px;
@@ -20,13 +54,14 @@ body {
 .anglebutton {
   padding-top: 12px;
   cursor: pointer;
-  width: 169px;
+  width: 19%;
   height: 37px;
   border-radius: 7px;
-  background-color: #ededed;
+  background-color: #a7a7a7;
   text-align: center;
   display: inline-block;
   font-weight: bold;
+  border: 5px solid white;
 }
 
 .container {
@@ -46,7 +81,7 @@ body {
   border-radius: 7px;
   position: relative;
   overflow: hidden;
-  background: rgb(41 80 139)
+  background: rgb(10 38 81);
 }
 
 /* error message div */
@@ -89,6 +124,15 @@ body {
   cursor: pointer;
 }
 
+.welcompage {
+  margin-top: -2%;
+  margin-left: -3%;
+  margin-right: -3%;
+  background: #a7a7a7;
+  border-radius: 7px;
+  color: #ffffff;
+}
+
 .validatemsg {
   background-color: #c9f1d3 !important;
   border: 5px solid #076620 !important;
@@ -101,8 +145,8 @@ body {
 
 /* div scrol*/
 div.maindiv {
-  width: 70%;
-  height: 74%;
+  width: 92%;
+  height: 88%;
   overflow: auto;
 }
 
@@ -111,7 +155,7 @@ div.maindiv {
   text-align: center;
 }
 
-input {
+select, input {
   height: 27px;
   border-color: #030303;
   background-color: #ebebeb;
@@ -120,5 +164,12 @@ input {
 }
 
 th {
-  background-color: #dddddd
+  background-color: #dddddd;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  /* table-layout: fixed; */
+  word-wrap: break-word
 }
