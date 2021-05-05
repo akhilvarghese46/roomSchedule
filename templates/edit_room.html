@@ -1,0 +1,66 @@
+{% extends 'main.html' %}
+{% block content %}
+<script>
+  function isNumberKey(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+      return false;
+    return true;
+  }
+</script>
+
+<form method="post" action="">
+  <h3>Edit Rooms</h3>
+  <table>
+    <tr>
+      <td>Room Name/Number:</td>
+<!--      <td> <label name="lblRmName">101</label>-->
+                              <td><input type="text" contentEditable="false"
+                       placeholder="lblRmName" value={{data.name}}></td>
+    </tr>
+    <tr>
+      <td>Room Type:</td>
+      <td><select name="roomType" id="roomTypeId">
+          {% if data.type == "single" %}
+            <option value="single" selected>Single</option>
+          {% else %}
+            <option value="single">Single</option>
+          {% endif %}
+
+        {% if data.type == "double" %}
+            <option value="double" selected>Double</option>
+          {% else %}
+            <option value="double">Double</option>
+          {% endif %}
+
+        {% if data.type == "triple" %}
+            <option value="triple" selected>Triple</option>
+          {% else %}
+            <option value="triple">Triple</option>
+          {% endif %}
+        {% if data.type == "queen" %}
+            <option value="queen" selected>Queen</option>
+          {% else %}
+            <option value="queen">Queen</option>
+          {% endif %}
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Room Price:</td>
+      <td><input type="number" name="rmPrice" required placeholder="Room Price"  value={{data.price}} onkeypress="return isNumberKey(event)" />
+      </td>
+    </tr>
+    <tr>
+      <td>Additional Requirements:</td>
+      <td><input type="textarea" contentEditable="true" name="addReq"
+                       placeholder="addReq" value={{data.req}}></td>
+<!--      <td><textarea id="addReq"  name="addReq"  rows="4" cols="50" maxlength="150"></textarea></td>-->
+    </tr>
+    <tr>
+      <td></td>
+      <td><button class="btncreate btn">Add Room</button></td>
+    </tr>
+  </table>
+</form>
+{% endblock %}
