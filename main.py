@@ -46,6 +46,14 @@ def getBookingRoomFilter(bookData):
         name_list.append(dict(i))
     return name_list
 
+def getBookedRoomDetails(bookingId):
+    name_list = []
+    query = datastore_client.query(kind="BookingRoomList")
+    query = query.add_filter('bookingKey', '=', bookingId).fetch()
+    for i in query:
+        name_list.append(dict(i))
+    return name_list
+
 def getRoomDetails(rmname):
     entity_key = datastore_client.key("Room", rmname)
     enitity_exists = datastore_client.get(key=entity_key)
@@ -185,10 +193,68 @@ def getBookedRoomList():
     else:
         error_message = "Page not loaded! User Data is missing"
         return render_template("error.html", error_message=error_message)
+        
+@app.route("/updatebookederoom/<bookingId>", methods=["GET", "POST"])
+def updateBookedRoom(bookingId=None):
+    user_data =checkUserData();
+    print("-----------------------1-----------------------------")
+    print(request.method)
+    if user_data != None:
+        print("-----------------------2-----------------------------")
 
-@app.route("/editbookederoom/<name>", methods=["GET", "POST"])
-def editBookedRoom(name=None):
-    return render_template("edit_booking.html")
+        try:
+            data = dict(request.form)
+            bookingdata = data.get("bookedRmData")
+            bookingdata = bookingdata.replace("'", "\"")
+            booking=json.loads(bookingdata)
+            oldstartdate = booking['startdate']
+            oldtodate = booking['enddate']
+            if((oldstartdate != data.get("fromDate")) or (oldtodate!= data.get("toDate")) ):
+                print("-----------------------5-----------------------------")
+
+                bookingKey = booking['rmname']+"|"+data.get("fromDate")+"|"+data.get("toDate")+"|"+user_data['email']
+                entity_key = datastore_client.key("BookingRoomList", bookingKey)
+                enitity_exists = datastore_client.get(key=entity_key)
+                if enitity_exists:
+                    error_message = "an entry with same name already exists. try with an another name"
+                    return render_template("error.html", error_message=error_message)
+                else:
+                    entity_key_old = datastore_client.key("BookingRoomList", bookingKey)
+                    datastore_client.delete(key=entity_key_old)
+            entity = datastore.Entity(key=bookingKey)
+            bookingObj = Booking(bookingKey=bookingKey, rmname= booking['rmname'], type = booking["type"], price=booking["price"], req = data.get("roomType"),adduserfecilitiese=booking['req'], startdate =data.get("fromDate"), enddate=data.get("toDate"), loginusername = user_data['email'])
+            obj = bookingObj.__dict__
+            obj.pop("bookingKey")
+            entity.update(obj)
+            datastore_client.put(entity)
+            name_list=getBookedRoomListDetails();
+            return render_template("bookedroomlist.html" ,userdata=user_data, BookedRoomData=name_list)
+        except ValueError as exc:
+            error_message = str(exc)
+            return render_template("error.html", error_message=error_message)
+    else:
+        error_message = "Page not loaded! User Data is missing"
+        return render_template("error.html", error_message=error_message)
+
+@app.route("/editbookederoom/<bookingId>", methods=["GET", "POST"])
+def editBookedRoom(bookingId=None):
+    user_data =checkUserData();
+    print("-----------------------1-----------------------------")
+    print(request.method)
+    if user_data != None:
+        print("-----------------------2-----------------------------")
+        try:
+            if bookingId:
+                print("-----------------------3-----------------------------")
+
+                name_list = getBookedRoomDetails(bookingId)
+                return render_template("edit_booking.html",user_data=user_data,bookedRmData=name_list)
+        except ValueError as exc:
+            error_message = str(exc)
+            return render_template("error.html", error_message=error_message)
+    else:
+        error_message = "Page not loaded! User Data is missing"
+        return render_template("error.html", error_message=error_message)
 
 @app.route("/deletebookederoom/<id>", methods=["GET", "POST"])
 def deleteBookedRoom(id=None):

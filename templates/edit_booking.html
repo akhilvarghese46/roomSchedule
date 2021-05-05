@@ -1,31 +1,41 @@
 {% extends 'main.html' %}
 {% block content %}
-<form method="post" action="">
+<form method="post" action="/updatebookederoom/bookedRmData[0].bookingId">
   <h3>Update Room Booking</h3>
+  {%print(bookedRmData)%}
+  {%print(bookedRmData[0].startdate)%}
+  <input type="hidden" value="{{bookedRmData[0].bookingId}}" name="bookedRmData">
   <table>
     <tr>
       <td>From Date:</td>
-      <td><label name="lblFromDate"></label></td>
+      <td><input type="date" required name="fromDate" placeholder="DD-MM-YYYY" value="{{bookedRmData[0].startdate}}" /></td>
     </tr>
     <tr>
       <td>To Date:</td>
-      <td><label name="lblToDate"></label></td>
+      <td><input type="date" required name="toDate" placeholder="DD-MM-YYYY" value="{{bookedRmData[0].enddate}}" /></td>
     </tr>
     <tr>
       <td>Room Type:</td>
-      <td><label name="lblrmType"></td>
+      <td>
+        <select name="roomType" id="roomTypeId">
+          <option value="single" {% if bookedRmData[0].type=="single" %} selected {% endif %}>Single</option>
+          <option value="double" {% if bookedRmData[0].type=="double" %} selected {% endif %}>Double</option>
+          <option value="triple" {% if bookedRmData[0].type=="triple" %} selected {% endif %}>Triple</option>
+          <option value="queen" {% if bookedRmData[0].type=="queen" %} selected {% endif %}>Queen</option>
+        </select>
+      </td>
     </tr>
     <tr>
       <td>Room Price:</td>
-      <td><label name="lblrmPrice"></td>
+      <td><label name="lblrmPrice">{{bookedRmData[0].price}}</td>
     </tr>
     <tr>
       <td>Additional Facilities:</td>
-      <td><label name="lblrmPrice"></td>
+      <td><label name="lblrmreq">{{bookedRmData[0].req}}</td>
     </tr>
     <tr>
       <td>Additional Requirements:</td>
-      <td><textarea id="addReq" name="addReq" rows="4" cols="50" maxlength="150"></textarea></td>
+      <td><textarea id="addReq" name="addReq" value={{bookedRmData[0].adduserfecilitiese}} rows="4" cols="50" maxlength="150"></textarea></td>
     </tr>
 
     <tr>
