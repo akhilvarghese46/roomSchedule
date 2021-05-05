@@ -30,7 +30,13 @@ def getAvailableRoomData():
     query = query.add_filter('isbooked', '=', 0).fetch()
     for i in query:
         name_list.append(dict(i))
+        print(dict(i))
     return name_list
+    """query_2 = datastore_client.query(kind="BookingRoomList").fetch()
+    for i in query:
+        name_list.append(dict(i))
+    return name_list"""
+
 
 def getBookedRoomListDetails():
     name_list = []
@@ -40,10 +46,31 @@ def getBookedRoomListDetails():
     return name_list
 
 def getBookingRoomFilter(bookData):
+    fromDate=datetime.fromisoformat(bookData['fromDate'])
+    toDate=datetime.fromisoformat(bookData['toDate'])
     name_list = []
-    query = datastore_client.query(kind="Room").fetch()
+    query = datastore_client.query(kind="Room")
+    query = query.add_filter('type', '=', bookData["rmType"]).fetch()
     for i in query:
-        name_list.append(dict(i))
+        data = dict(i)
+        data["isBooked"] = 0
+        data["fromDate"] = None
+        data["toDate"] = None
+        query_2 = datastore_client.query(kind="BookingRoomList")
+        query_2 = query_2.add_filter('rmname', '=', dict(i)['name']).fetch()
+        for j in query_2:
+            if(dict(i)['name'] == dict(j)['rmname']):
+                data["isBooked"] = 1
+                data["fromDate"] = dict(j)['startdate']
+                data["toDate"] = dict(j)['enddate']
+        name_list.append(data)
+        newname_list =[]
+        for data in name_list:
+            if(data['fromDate']!=None and data['toDate']!=None):
+                if((fromDate >=datetime.fromisoformat(data['fromDate']) and toDate <= datetime.fromisoformat(data['toDate']) and fromDate >=datetime.fromisoformat(data['toDate'])) or (fromDate >=datetime.fromisoformat(data['fromDate']) and toDate >= datetime.fromisoformat(data['toDate']) and fromDate >=datetime.fromisoformat(data['toDate'])) or (fromDate <= datetime.fromisoformat(data['fromDate']) and toDate <= datetime.fromisoformat(data['toDate']) and datetime.fromisoformat(data['fromDate'])>=toDate )):
+                    newname_list.append(data)
+            else:
+                newname_list.append(data)
     return name_list
 
 def getBookedRoomDetails(bookingId):
@@ -95,7 +122,7 @@ def setRoomDetails():
             else:
                 error_message = "an entry with same name already exists. try with an another name"
                 return render_template("error.html", error_message=error_message)
-        return render_template("add_room.html")
+        return render_template("add_room.html",user_data=user_data)
     else:
         error_message = "Page not loaded! User Data is missing"
         return render_template("index.html", user_data=user_data, error_message=error_message)
@@ -175,7 +202,8 @@ def editAvailableRoom(name=None):
 
 @app.route("/addroombookingSearch", methods=["GET", "POST"])
 def getRoomBookingSearch():
-    return render_template("search_booking.html")
+    startdate=datetime.today().strftime('%d-%m-%y')
+    return render_template("search_booking.html",startdate=startdate)
 
 @app.route("/addRoomBookSearchResult", methods=["GET", "POST"])
 def getRoomBookingSearchResult():
@@ -183,15 +211,22 @@ def getRoomBookingSearchResult():
     if user_data != None:
         try:
             data = dict(request.form)
-            fromDate = data.get("fromDate")
-            toDate = data.get("toDate")
+            startDate = data.get("fromDate")
+            endDate = data.get("toDate")
             rmType  = data.get("roomType")
+            todayDate = datetime.today()
+            fromDate=datetime.fromisoformat(startDate)
+            print(fromDate)
+            if(todayDate > fromDate):
+                error_message = "User can't select previous dates as checkin date"
+                return render_template("error.html", error_message=error_message)
             booking={}
-            booking["fromDate"] = fromDate
-            booking["toDate"] = toDate
+            booking["fromDate"] = startDate
+            booking["toDate"] = endDate
             booking["rmType"] = rmType
             name_list = getBookingRoomFilter(booking)
-            return render_template("search_bookinglist.html",booking=booking ,avlRoom = name_list)
+
+            return render_template("search_bookinglist.html",booking=booking ,avlRoom = name_list,user_data=user_data)
         except ValueError as exc:
             error_message = str(exc)
             return render_template("error.html", error_message=error_message)

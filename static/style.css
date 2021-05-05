@@ -160,16 +160,27 @@ select, input {
   border-color: #030303;
   background-color: #ebebeb;
   font-weight: bold;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
+}
+
+select {
+  width: 24%;
+  height: 32px;
 }
 
 th {
   background-color: #dddddd;
+  color: #1e1691;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   /* table-layout: fixed; */
-  word-wrap: break-word
+  word-wrap: break-word;
+  margin-left: 5%;
+}
+
+a {
+  text-decoration: none;
 }

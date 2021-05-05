@@ -1,16 +1,16 @@
 {% extends 'main.html' %}
 {% block content %}
-<div class="datadiv">
+<div class="datadiv" style="height: 45%;">
   <form method="post" action="/addRoomBookSearchResult">
     <h3>Room Booking</h3>
-    <table>
+    <table style="margin-left: 0%;">
       <tr>
         <td>From Date:</td>
-        <td><input type="date" required name="fromDate" placeholder="DD-MM-YYYY" /></td>
+        <td><input type="date" required name="fromDate" placeholder="DD-MM-YYYY" value="{{startdate}}" /></td>
         <td>To Date:</td>
         <td><input type="date" required name="toDate" placeholder="DD-MM-YYYY" /></td>
         <td>Room Type:</td>
-        <td><select name="roomType" id="roomTypeId">
+        <td><select name="roomType" id="roomTypeId" style="width: 84%;">
             <option value="single" selected>Single</option>
             <option value="double">Double</option>
             <option value="triple">Triple</option>
@@ -19,18 +19,18 @@
         </td>
       </tr>
       <tr>
+        <td><br></td>
         <td></td>
+      </tr>
+      <tr>
+        <td><br></td>
         <td></td>
       </tr>
       <tr>
         <td></td>
         <td></td>
-      </tr>
-      <tr>
         <td></td>
-        <td></td>
-        <td></td>
-        <td><button class="btncreate btn">Search Availability</button></td>
+        <td><button class="btncreate btn" style="width: 60%;">Search Availability</button></td>
       </tr>
     </table>
   </form>
