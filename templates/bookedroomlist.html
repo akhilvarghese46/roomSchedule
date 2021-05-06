@@ -3,6 +3,24 @@
 <div class="datadiv">
   <h3>Booked Room List</h3>
   <form method="post" action="">
+    <table style="margin-left: 41px;width: 70%;">
+      <tr>
+        <td>Room Type:</td>
+        <td><select name="roomType" id="roomTypeId" style="width: 84%;">
+            <option value="AllType" selected>All Type</option>
+            <option value="single">Single</option>
+            <option value="double">Double</option>
+            <option value="triple">Triple</option>
+            <option value="queen">Queen</option>
+          </select>
+        </td>
+        <td>
+          <button class="btncreate btn" style="width: 55%;">Search Booked Data</button>
+        </td>
+      </tr>
+    </table>
+    <br>
+    <br>
     <table border="1" style="margin-left: 41px;width: 90%;">
       <tr>
         <th>Room Name</th>
