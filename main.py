@@ -76,10 +76,13 @@ def getBookingRoomFilter(bookData):
         for data in name_list:
             if(data['fromDate']!=None and data['toDate']!=None):
                 if((fromDate >=datetime.fromisoformat(data['fromDate']) and toDate <= datetime.fromisoformat(data['toDate']) and fromDate >=datetime.fromisoformat(data['toDate'])) or (fromDate >=datetime.fromisoformat(data['fromDate']) and toDate >= datetime.fromisoformat(data['toDate']) and fromDate >=datetime.fromisoformat(data['toDate'])) or (fromDate <= datetime.fromisoformat(data['fromDate']) and toDate <= datetime.fromisoformat(data['toDate']) and datetime.fromisoformat(data['fromDate'])>=toDate )):
+                    print(datetime.fromisoformat(data['fromDate']))
+                    print(datetime.fromisoformat(data['toDate']))
+                    print(data)
                     newname_list.append(data)
             else:
                 newname_list.append(data)
-    return name_list
+    return newname_list
 
 def getBookedRoomDetails(bookingId):
     name_list = []
@@ -225,7 +228,10 @@ def getRoomBookingSearchResult():
             rmType  = data.get("roomType")
             todayDate = datetime.today()
             fromDate=datetime.fromisoformat(startDate)
-            print(fromDate)
+            ToDate=datetime.fromisoformat(endDate)
+            if(ToDate < fromDate):
+                error_message = "Check-in date should be less than Check-out Date"
+                return render_template("error.html", error_message=error_message)
             if(todayDate >= fromDate):
                 error_message = "User can't select previous dates as checkin date"
                 return render_template("error.html", error_message=error_message)
@@ -291,7 +297,7 @@ def getBookedRoomList(type):
             bookingSearch={}
             bookingSearch["rmType"] = type
             data = dict(request.form)
-            if(data.get("roomType") != 'AllType'):
+            if(data.get("roomType") != 'AllType' and data.get("roomType") != None):
                 bookingSearch["rmType"] = data.get("roomType")
             name_list=getBookedRoomListDetails(bookingSearch);
             return render_template("bookedroomlist.html" ,userdata=user_data, BookedRoomData=name_list)
@@ -305,11 +311,7 @@ def getBookedRoomList(type):
 @app.route("/updatebookederoom/<bookingId>", methods=["GET", "POST"])
 def updateBookedRoom(bookingId=None):
     user_data =checkUserData();
-    print("-----------------------1-----------------------------")
-    print(request.method)
     if user_data != None:
-        print("-----------------------2-----------------------------")
-
         try:
             data = dict(request.form)
             bookingdata = data.get("bookedRmData")
@@ -318,8 +320,6 @@ def updateBookedRoom(bookingId=None):
             oldstartdate = booking['startdate']
             oldtodate = booking['enddate']
             if((oldstartdate != data.get("fromDate")) or (oldtodate!= data.get("toDate")) ):
-                print("-----------------------5-----------------------------")
-
                 bookingKey = booking['rmname']+"|"+data.get("fromDate")+"|"+data.get("toDate")+"|"+user_data['email']
                 entity_key = datastore_client.key("BookingRoomList", bookingKey)
                 enitity_exists = datastore_client.get(key=entity_key)
