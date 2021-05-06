@@ -39,42 +39,43 @@
     </div>
     <div class="container">
       {% block content %}
-      <h3>Available Rooms</h3>
-      <form method="post" action="">
-        <table border="1" style="border-collapse:collapse;table-layout: fixed; word-wrap: break-word;">
-          <colgroup>
-            <col span="1" style="width: 30%;">
-            <col span="1" style="width: 28%;">
-            <col span="1" style="width: 35%;">
-            <!---<col span="1" style="width: 25%;">
+      <div class="datadiv">
+        <h3>Available Rooms To Book- from {{todayDate}}</h3>
+        <form method="post" action="">
+          <table border="1" style="width:90%">
+            <colgroup>
+              <col span="1" style="width: 30%;">
+              <col span="1" style="width: 28%;">
+              <col span="1" style="width: 35%;">
+              <!---<col span="1" style="width: 25%;">
             <col span="1" style="width: 25%;">
             <col span="1" style="width: 25%;">
             <col span="1" style="width: 25%;">
             <col span="1" style="width: 25%;">
             <col span="1" style="width: 25%;">--->
-            <col span="1" style="width: 25%;">
-          </colgroup>
-          <tr>
-            <th>Room Name</th>
-            <th>Room Price</th>
-            <th>Room Type</th>
-            <th>Select</th>
-          </tr>
-          {% for room in rooms %}
+              <col span="1" style="width: 25%;">
+            </colgroup>
+            <tr>
+              <th>Room Name</th>
+              <th>Room Price</th>
+              <th>Room Type</th>
 
-          <tr>
-            <td> {{room.name}}</td>
-            <td>{{room.price}}</td>
-            <td>{{room.type}}</td>
+            </tr>
+            {% for room in rooms %}
 
-            <td>
-              <a href="/availableroomdetails/{{room.name}}">Select Room</a>
-            </td>
-          </tr>
-          {% endfor %}
+            <tr>
+              <td> {{room.name}}</td>
+              <td>{{room.price}}</td>
+              <td>{{room.type}}</td>
 
-        </table>
-      </form>
+            </tr>
+            {% endfor %}
+
+          </table>
+        </form>
+        <br>
+        <br>
+      </div>
       {% endblock %}
     </div>
   </div>

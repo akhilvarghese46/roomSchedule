@@ -1,45 +1,47 @@
 {% extends 'main.html' %}
-{% block content %}
-<form method="post" action="/addRoomBookToDb">
-  <h3>Add Room Booking</h3>
-  {%print("--------------------")%}
-  {%print(booking)%}
-  <input type="hidden" name="booking" value="{{booking}}">
-  <input type="hidden" name="roomData" value="{{roomData}}">
-  <table>
-    <tr>
-      <td>From Date:</td>
-      <td><label name="lblFromDate">{{booking['fromDate']}}</label></td>
-    </tr>
-    <tr>
-      <td>To Date:</td>
-      <td><label name="lblToDate">{{booking["toDate"]}}</label></td>
-    </tr>
-    <tr>
-      <td>Room Number:</td>
-      <td><label name="lblrmName">{{roomData.name}}</td>
-    </tr>
-    <tr>
-      <td>Room Type:</td>
-      <td><label name="lblrmType">{{roomData.type}}</td>
-    </tr>
-    <tr>
-      <td>Room Price:</td>
-      <td><label name="lblrmPrice">{{roomData.price}}</td>
-    </tr>
-    <tr>
-      <td>Additional Facilities:</td>
-      <td><label name="lblrmReq">{{roomData.req}}</td>
-    </tr>
-    <tr>
-      <td>Additional Requirements:</td>
-      <td><textarea id="addReq" name="addUserReq" rows="4" cols="50" maxlength="150"></textarea></td>
-    </tr>
+{% block content%}
+<div class="datadiv">
+  <form method="post" action="/addRoomBookToDb">
+    <h3>Add Room Booking</h3>
+    <input type="hidden" name="booking" value="{{booking}}">
+    <input type="hidden" name="roomData" value="{{roomData}}">
+    <table style="width: 72%;margin-left: 23%;">
+      <tr>
+        <td>From Date:</td>
+        <td><label name="lblFromDate">{{booking['fromDate']}}</label></td>
+      </tr>
+      <tr>
+        <td>To Date:</td>
+        <td><label name="lblToDate">{{booking["toDate"]}}</label></td>
+      </tr>
+      <tr>
+        <td>Room Number:</td>
+        <td><label name="lblrmName">{{roomData.name}}</td>
+      </tr>
+      <tr>
+        <td>Room Type:</td>
+        <td><label name="lblrmType">{{roomData.type}}</td>
+      </tr>
+      <tr>
+        <td>Room Price:</td>
+        <td><label name="lblrmPrice">{{roomData.price}}</td>
+      </tr>
+      <tr>
+        <td>Additional Facilities:</td>
+        <td><label name="lblrmReq">{{roomData.req}}</td>
+      </tr>
+      <tr>
+        <td>Additional User Requirements:</td>
+        <td><textarea id="addReq" name="addUserReq" rows="4" cols="50" maxlength="150"></textarea></td>
+      </tr>
 
-    <tr>
-      <td></td>
-      <td><button class="btncreate btn">Submit Room</button></td>
-    </tr>
-  </table>
-</form>
+      <tr>
+        <td></td>
+        <td><button class="btncreate btn" style="width: 29%;">Submit Room</button></td>
+      </tr>
+    </table>
+  </form>
+  <br>
+  <br>
+</div>
 {% endblock %}

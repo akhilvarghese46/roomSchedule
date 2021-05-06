@@ -100,7 +100,8 @@ def root():
         return render_template("index.html", user_data=user_data, error_message=error_message)
     else:
         name_list = getAvailableRoomData();
-        return render_template("main.html", user_data=user_data,rooms=name_list)
+        todayDate= datetime.today().strftime('%Y-%m-%d')
+        return render_template("main.html", user_data=user_data,rooms=name_list,todayDate=todayDate)
 
 @app.route("/addroom", methods=["GET", "POST"])
 def setRoomDetails():
@@ -217,7 +218,7 @@ def getRoomBookingSearchResult():
             todayDate = datetime.today()
             fromDate=datetime.fromisoformat(startDate)
             print(fromDate)
-            if(todayDate > fromDate):
+            if(todayDate >= fromDate):
                 error_message = "User can't select previous dates as checkin date"
                 return render_template("error.html", error_message=error_message)
             booking={}

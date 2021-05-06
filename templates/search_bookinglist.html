@@ -2,7 +2,7 @@
 {% block content %}
 <div class="datadiv">
   <h3>Available Rooms for Booking</h3>
-  <table>
+  <table style="width: 20%; margin-left: 38%;">
     <tr>
       <td>From Date:</td>
       <td><label name="lblFromDate">{{booking["fromDate"]}}</label></td>
@@ -54,6 +54,7 @@
       </tr>
       {% endfor %}
       {%endif%}
+    </table>
   </form>
   <br>
   <br>

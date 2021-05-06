@@ -1,30 +1,19 @@
 {% extends 'main.html' %}
 {% block content %}
 <div class="datadiv">
-
+  <h3>Booked Room List</h3>
   <form method="post" action="">
-    <table border="1" style="">
-      <colgroup>
-        <col span="1" style="width: 30%;">
-        <col span="1" style="width: 28%;">
-        <col span="1" style="width: 35%;">
-        <!---<col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">--->
-        <col span="1" style="width: 25%;">
-      </colgroup>
+    <table border="1" style="margin-left: 41px;width: 90%;">
       <tr>
         <th>Room Name</th>
         <th>Room Price</th>
         <th>Room Type</th>
         <th>User Email</th>
+        <th>From Date</th>
+        <th>To Date</th>
         <th>Select</th>
         <th>Delete</th>
       </tr>
-      {%print(BookedRoomData)%}
       {% if BookedRoomData|length == 0 %}
       <tr>
         <td colspan="5" style="text-align: center;"> ------ No GPU Data found ------ </td>
@@ -36,11 +25,11 @@
         <td>{{room.price}}</td>
         <td>{{room.type}}</td>
         <td>{{room.loginusername}}</td>
-        {%print(userdata['email'])%}
-        {%print(room.loginusername)%}
+        <td>{{room.startdate}}</td>
+        <td>{{room.enddate}}</td>
         {%if userdata['email']==room.loginusername%}
-        <td><a href="/editbookederoom/{{room.bookingKey}}">Edit</a></td>
-        <td><a href="/deletebookederoom/{{room.bookingKey}}">Delete</a></td>
+        <td><a href="/editbookederoom/{{room.bookingKey}}">&#x270D;</a></td>
+        <td><a href="/deletebookederoom/{{room.bookingKey}}"> &#10060;</a></td>
         {% else: %}
         <td></td>
         <td></td>
@@ -48,6 +37,9 @@
       </tr>
       {% endfor %}
       {%endif%}
+    </table>
   </form>
+  <br>
+  <br>
 </div>
 {% endblock %}
