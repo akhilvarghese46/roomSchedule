@@ -10,16 +10,14 @@
         <td>To Date:</td>
         <td><input type="date" required name="toDate" placeholder="DD-MM-YYYY" /></td>
         <td>Room Type:</td>
-        <td><select name="roomType" id="roomTypeId" style="width: 84%;">
-            <option value="single" selected>Single</option>
-            <option value="double">Double</option>
-            <option value="triple">Triple</option>
-            <option value="queen">Queen</option>
-          </select>
+        <td>{{booking.type}}
         </td>
       </tr>
       <tr>
-        <td><br></td>
+        <td><input type="hidden" name="rmname" value="{{rmname}}">
+          <input type="hidden" name="booking" value="{{booking}}">
+          <input type="hidden" name="roomType" value="{{booking.type}}">
+        </td>
         <td></td>
       </tr>
       <tr>

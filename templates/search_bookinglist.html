@@ -2,20 +2,6 @@
 {% block content %}
 <div class="datadiv">
   <h3>Available Rooms for Booking</h3>
-  <table style="width: 20%; margin-left: 38%;">
-    <tr>
-      <td>From Date:</td>
-      <td><label name="lblFromDate">{{booking["fromDate"]}}</label></td>
-    </tr>
-    <tr>
-      <td>To Date:</td>
-      <td><label name="lblToDate">{{booking["toDate"]}}</label></td>
-    </tr>
-    <tr>
-      <td>Room Type:</td>
-      <td><label name="lblRmType">{{booking["rmType"]}}</label></td>
-    </tr>
-  </table>
   <form method="post" action="">
     <table border="1" style="width:92%;">
       <colgroup>
@@ -48,8 +34,7 @@
         <td>{{room.price}}</td>
         <td>{{room.type}}</td>
         <td>
-
-          <a href="/addRoomBook?room={{room.name}}&&booking={{booking}}">Select Room</a>
+          <a href="/addRoomBook?room={{room.name}}&&booking={{room}}">Select Room</a>
         </td>
       </tr>
       {% endfor %}

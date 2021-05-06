@@ -61,15 +61,20 @@
               <th>Room Type</th>
 
             </tr>
+            {% if rooms|length == 0 %}
+            <tr>
+              <td colspan="3" style="text-align: center;"> ------ No Room found for booking. Please find other date------ </td>
+            </tr>
+            {% else: %}
             {% for room in rooms %}
 
             <tr>
               <td> {{room.name}}</td>
               <td>{{room.price}}</td>
               <td>{{room.type}}</td>
-
             </tr>
             {% endfor %}
+            {%endif%}
 
           </table>
         </form>

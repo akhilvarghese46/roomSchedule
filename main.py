@@ -83,10 +83,46 @@ def getBookingRoomFilter(bookData):
                 newname_list.append(data)
     return newname_list
 
+def getBookingRoomFilterTwo(bookData):
+    fromDate=datetime.fromisoformat(bookData['fromDate'])
+    toDate=datetime.fromisoformat(bookData['toDate'])
+    name_list = []
+    query = datastore_client.query(kind="Room")
+    query = query.add_filter('name', '=', bookData["rmName"]).fetch()
+    for i in query:
+        data = dict(i)
+        data["isBooked"] = 0
+        data["fromDate"] = None
+        data["toDate"] = None
+        query_2 = datastore_client.query(kind="BookingRoomList")
+        query_2 = query_2.add_filter('rmname', '=', dict(i)['name']).fetch()
+        for j in query_2:
+            if(dict(i)['name'] == dict(j)['rmname']):
+                data["isBooked"] = 1
+                data["fromDate"] = dict(j)['startdate']
+                data["toDate"] = dict(j)['enddate']
+        name_list.append(data)
+        newname_list =[]
+        for data in name_list:
+            if(data['fromDate']!=None and data['toDate']!=None):
+                if((fromDate >=datetime.fromisoformat(data['fromDate']) and toDate <= datetime.fromisoformat(data['toDate']) and fromDate >=datetime.fromisoformat(data['toDate'])) or (fromDate >=datetime.fromisoformat(data['fromDate']) and toDate >= datetime.fromisoformat(data['toDate']) and fromDate >=datetime.fromisoformat(data['toDate'])) or (fromDate <= datetime.fromisoformat(data['fromDate']) and toDate <= datetime.fromisoformat(data['toDate']) and datetime.fromisoformat(data['fromDate'])>=toDate )):
+                    newname_list.append(data)
+            else:
+                newname_list.append(data)
+    return newname_list
+
+
 def getBookedRoomDetails(bookingId):
     name_list = []
     query = datastore_client.query(kind="BookingRoomList")
     query = query.add_filter('bookingKey', '=', bookingId).fetch()
+    for i in query:
+        name_list.append(dict(i))
+    return name_list
+
+def getBookedRoomDetailsData():
+    name_list = []
+    query = datastore_client.query(kind="Room").fetch()
     for i in query:
         name_list.append(dict(i))
     return name_list
@@ -189,14 +225,24 @@ def editAvailableRoom(name=None):
                     else:
                         try:
                             data = dict(request.form)
-                            print(data)
+                            editedname =str(data.get("rmname")).upper();
+                            oldname =str(data.get("oldrmname")).upper();
+                            if(editedname != oldname ):
+                                entity_key = datastore_client.key("Room", editedname)
+                                newenitity_exists = datastore_client.get(key=entity_key)
+                                if newenitity_exists:
+                                    error_message = "An entry with same name already exists. try with an another name"
+                                    return render_template("error.html", error_message=error_message)
+                                else:
+                                    entity_key_old = datastore_client.key("Room", name)
+                                    datastore_client.delete(key=entity_key_old)
                             entity = datastore.Entity(key=entity_key)
-                            room = Room(name=name, type=data.get("roomType"), price=data.get("rmPrice"), req=data.get("addReq"),adminname = user_data['email'])
+                            room = Room(name=editedname, type=data.get("roomType"), price=data.get("rmPrice"), req=data.get("addReq"),adminname = user_data['email'])
                             obj = room.__dict__
-                            obj.pop("name")
+
                             entity.update(obj)
                             datastore_client.put(entity)
-                            obj["name"] = name
+                            obj["name"] = editedname
                             return render_template("available_roomdetails.html", data=obj)
 
                         except Exception as e:
@@ -210,11 +256,20 @@ def editAvailableRoom(name=None):
         error_message = "Page not loaded! User Data is missing"
         return render_template("error.html", error_message=error_message)
 
-
 @app.route("/addroombookingSearch", methods=["GET", "POST"])
 def getRoomBookingSearch():
-    startdate=datetime.today().strftime('%d-%m-%y')
-    return render_template("search_booking.html",startdate=startdate)
+    user_data =checkUserData()
+    if user_data != None:
+        try:
+            startdate=datetime.today().strftime('%d-%m-%y')
+            name_list = getBookedRoomDetailsData()
+        except ValueError as exc:
+            error_message = str(exc)
+            return render_template("error.html", error_message=error_message)
+    else:
+        error_message = "Page not loaded! User Data is missing"
+        return render_template("error.html", error_message=error_message)
+    return render_template("search_bookinglist.html",user_data=user_data,startdate=startdate,avlRoom=name_list)
 
 @app.route("/addRoomBookSearchResult", methods=["GET", "POST"])
 def getRoomBookingSearchResult():
@@ -225,22 +280,36 @@ def getRoomBookingSearchResult():
             startDate = data.get("fromDate")
             endDate = data.get("toDate")
             rmType  = data.get("roomType")
+            rmname = data.get("rmname")
+            bookingDataUrl = data.get("booking")
+            bookingDataUrl = bookingDataUrl.replace("'", "\"")
+            bookingDataUrl=json.loads(bookingDataUrl)
             todayDate = datetime.today()
             fromDate=datetime.fromisoformat(startDate)
             ToDate=datetime.fromisoformat(endDate)
             if(ToDate < fromDate):
+                return_url = '/addroombookingSearch'
                 error_message = "Check-in date should be less than Check-out Date"
-                return render_template("error.html", error_message=error_message)
+                return render_template("error.html", error_message=error_message,return_url=return_url)
             if(todayDate >= fromDate):
+                return_url = '/addroombookingSearch'
                 error_message = "User can't select previous dates as checkin date"
-                return render_template("error.html", error_message=error_message)
+                return render_template("error.html", error_message=error_message,return_url=return_url)
             booking={}
             booking["fromDate"] = startDate
             booking["toDate"] = endDate
             booking["rmType"] = rmType
-            name_list = getBookingRoomFilter(booking)
+            booking["rmName"] = rmname
+            name_list = getBookingRoomFilterTwo(booking)
+            booking["rmPrice"] =name_list[0]["price"]
+            booking["req"] =name_list[0]["req"]
+            if name_list:
+                return render_template("add_booking.html" ,user_data=user_data,roomData = name_list[0],booking=booking)
+            else:
+                error_message = "An entry with same date is already exists. try with an another date/time"
+                return render_template("error.html", error_message=error_message)
 
-            return render_template("search_bookinglist.html",booking=booking ,avlRoom = name_list,user_data=user_data)
+            """return render_template("search_bookinglist.html",booking=booking ,avlRoom = name_list,user_data=user_data)"""
         except ValueError as exc:
             error_message = str(exc)
             return render_template("error.html", error_message=error_message)
@@ -251,18 +320,24 @@ def getRoomBookingSearchResult():
 @app.route("/addRoomBook", methods=["GET", "POST"])
 def setRoomBooking():
     rmname = request.args.get('room')
+    rmname = request.args.get('room')
     booking = request.args.get('booking')
     booking = booking.replace("'", "\"")
     booking=json.loads(booking)
     booking["rmname"] = rmname
-    if rmname:
+    """if rmname:
         name_list = getRoomDetails(rmname)
         return render_template("add_booking.html" ,roomData = name_list,booking=booking)
-    else:
-        return render_template("search_booking.html")
+    else:"""
+    return render_template("search_booking.html",rmname=rmname,booking=booking)
+
+
+
+
 
 @app.route("/addRoomBookToDb", methods=["GET", "POST"])
 def addRoomBookToDb():
+
     user_data =checkUserData();
     if user_data != None:
         try:
@@ -270,17 +345,24 @@ def addRoomBookToDb():
             bookingdata = data.get("booking")
             bookingdata = bookingdata.replace("'", "\"")
             booking=json.loads(bookingdata)
+
             roomData = data.get("roomData")
-            roomData = roomData.replace("'", "\"")
+
+            """roomData = roomData.replace("'", "\"")
+            roomData = roomData.replace('\r\n', '\\r\\n')
             roomData=json.loads(roomData)
-            name =roomData["name"]
+            """
+
+
+            name =booking["rmName"]
             bookingKey = name+"|"+booking['fromDate']+"|"+booking['toDate']+"|"+user_data['email']
             entity_key = datastore_client.key("BookingRoomList",bookingKey)
             entity = datastore.Entity(key=entity_key)
-            booking = Booking(bookingKey=bookingKey, rmname= name, type = roomData["type"], price=roomData["price"], req = roomData["req"],adduserfecilitiese=data.get("addUserReq"), startdate =booking['fromDate'], enddate=booking['toDate'], loginusername = user_data['email'])
+            booking = Booking(bookingKey=bookingKey, rmname= name, type = booking["rmType"], price=booking["rmPrice"], req = booking["req"],adduserfecilitiese=data.get("addUserReq"), startdate =booking['fromDate'], enddate=booking['toDate'], loginusername = user_data['email'])
             entity.update(booking.__dict__)
             datastore_client.put(entity)
-            return render_template("search_booking.html")
+            name_list = getBookedRoomDetailsData()
+            return render_template("search_bookinglist.html" ,avlRoom=name_list)
         except ValueError as exc:
             error_message = str(exc)
             return render_template("error.html", error_message=error_message)
