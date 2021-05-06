@@ -3,7 +3,7 @@
 <div class="datadiv">
   <form method="post" action="">
     <h3>Available Rooms for Booking</h3>
-    <table border="1" style="border-collapse:collapse;table-layout: fixed; word-wrap: break-word; margin-left: 0%;">
+    <table border="1" style="width:90%; margin-left: 4%;">
       <colgroup>
         <col span="1" style="width: 30%;">
         <col span="1" style="width: 28%;">
@@ -21,6 +21,7 @@
         <th>Room Price</th>
         <th>Room Type</th>
         <th>Select</th>
+        <th>Delete</th>
       </tr>
       {% for room in rooms %}
 
@@ -30,7 +31,11 @@
         <td>{{room.type}}</td>
 
         <td>
-          <a href="/availableroomdetails/{{room.name}}">Select Room</a>
+          <a href="/availableroomdetails/{{room.name}}">&#x270D;</a>
+        </td>
+        <td>
+          <a href="/deleteavailableroom/{{room.name}}">&#10060;</a>
+
         </td>
       </tr>
       {% endfor %}

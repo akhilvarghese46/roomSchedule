@@ -1,31 +1,33 @@
 {% extends 'main.html' %}
 {% block content %}
-<form method="post" action="/editavailableroom">
-  <h3>Available Room details</h3>
-  {{data}}
-  <table>
-    <tr>
-      <td><a href="/editavailableroom/{{data.name}}">Edit</a></td>
-    </tr>
-    <tr>
-      <td>Room Number</td>
-      <td><label name="lblrmName">{{data.name}}</label></td>
-    </tr>
-    <tr>
-      <td>Room Type:</td>
-      <td><label name="lblrmType">{{data.type}}</td>
-    </tr>
-    <tr>
-      <td>Room Price:</td>
-      <td><label name="lblrmPrice">{{data.price}}</td>
-    </tr>
-    <tr>
-      <td>Additional Facilities:</td>
-      <td><label name="lblrmPrice">{{data.req}}</td>
-    </tr>
-    <tr>
-      <td></td>
-    </tr>
-  </table>
-</form>
+<div class="datadiv">
+  <form method="post" action="/editavailableroom">
+    <h3>Available Room details</h3>
+    {{data}}
+    <table>
+      <tr>
+        <td><a href="/editavailableroom/{{data.name}}">Edit</a></td>
+      </tr>
+      <tr>
+        <td>Room Number</td>
+        <td><label name="lblrmName">{{data.name}}</label></td>
+      </tr>
+      <tr>
+        <td>Room Type:</td>
+        <td><label name="lblrmType">{{data.type}}</td>
+      </tr>
+      <tr>
+        <td>Room Price:</td>
+        <td><label name="lblrmPrice">{{data.price}}</td>
+      </tr>
+      <tr>
+        <td>Additional Facilities:</td>
+        <td><label name="lblrmPrice">{{data.req}}</td>
+      </tr>
+      <tr>
+        <td></td>
+      </tr>
+    </table>
+  </form>
+</div>
 {% endblock %}

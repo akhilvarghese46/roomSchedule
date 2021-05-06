@@ -30,7 +30,6 @@ def getAvailableRoomData():
     query = query.add_filter('isbooked', '=', 0).fetch()
     for i in query:
         name_list.append(dict(i))
-        print(dict(i))
     return name_list
     """query_2 = datastore_client.query(kind="BookingRoomList").fetch()
     for i in query:
@@ -377,6 +376,40 @@ def deleteBookedRoom(id=None):
                 bookingSearch={}
                 name_list=getBookedRoomListDetails(bookingSearch);
                 return render_template("bookedroomlist.html", userdata=user_data, BookedRoomData=name_list)
+            else:
+                error_message = "Page not loaded! User Data is missing"
+                return render_template("error.html", error_message=error_message)
+        except ValueError as exc:
+            error_message = str(exc)
+            return render_template("error.html", error_message=error_message)
+    else:
+        error_message = "Page not loaded! User Data is missing"
+        return render_template("error.html", error_message=error_message)
+
+@app.route("/deleteavailableroom/<id>", methods=["GET", "POST"])
+def deleteavailableroom(id=None):
+    user_data =checkUserData();
+    if user_data != None:
+        try:
+            if id != None:
+                name_list =[]
+                entity_key = datastore_client.key("Room", id)
+                enitity_exists = datastore_client.get(key=entity_key)
+                if enitity_exists:
+                    query_2 = datastore_client.query(kind="BookingRoomList")
+                    query_2 = query_2.add_filter('rmname', '=', id).fetch()
+                    for i in query_2:
+                        name_list.append(dict(i))
+                print(len(name_list))
+                if(len(name_list)==0):
+                    entity_key = datastore_client.key("Room", id)
+                    datastore_client.delete(key=entity_key)
+                    name_list = getAvailableRoomData();
+                    return render_template("available_roomlist.html", user_data=user_data, rooms=name_list)
+                else:
+                    error_message = "This room is alreday booked by a user.Hence it can't be delete"
+                    return render_template("error.html", error_message=error_message)
+
             else:
                 error_message = "Page not loaded! User Data is missing"
                 return render_template("error.html", error_message=error_message)
