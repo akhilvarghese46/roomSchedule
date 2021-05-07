@@ -10,6 +10,15 @@ body {
   background-size: cover;
 }
 
+.roomData {
+  padding-top: 12px;
+  border-radius: 7px;
+  background-color: #515151;
+  text-align: center;
+  font-weight: bold;
+  border: 5px solid white;
+}
+
 .datadiv {
   font-size: 1em;
   font-weight: 600;

@@ -1,27 +1,10 @@
 {% extends 'main.html' %}
 {% block content %}
-<div class="datadiv">
+<div class="datadiv" style="width:92%;">
   <h3>Available Rooms for Booking</h3>
   <form method="post" action="">
-    <table border="1" style="width:92%;">
-      <colgroup>
-        <col span="1" style="width: 30%;">
-        <col span="1" style="width: 28%;">
-        <col span="1" style="width: 35%;">
-        <!---<col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">
-    <col span="1" style="width: 25%;">--->
-        <col span="1" style="width: 25%;">
-      </colgroup>
-      <tr>
-        <th>Room Name</th>
-        <th>Room Price</th>
-        <th>Room Type</th>
-        <th>Select</th>
-      </tr>
+    <table border="1" style="width:50%;">
+
 
       {% if avlRoom|length == 0 %}
       <tr>
@@ -30,11 +13,31 @@
       {% else: %}
       {% for room in avlRoom %}
       <tr>
-        <td> {{room.name}}</td>
-        <td>{{room.price}}</td>
-        <td>{{room.type}}</td>
         <td>
-          <a href="/addRoomBook?room={{room.name}}&&booking={{room}}">Select Room</a>
+          <div class="roomData">
+            <table>
+              <tr>
+                <td>Room Type: {{room.type}} Room</td>
+              </tr>
+              <tr>
+
+                <td><img src="/static/{{room.type}}room.jpg" alt="roomimage" width="150px" height="100px">
+                </td>
+              </tr>
+              <tr>
+                <td>Room Name: {{room.name}}</td>
+              </tr>
+              <tr>
+                <td>Room Price :{{room.price}}</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="anglebutton" style="width: 21%;background: white;color: black;" href="/addRoomBook?room={{room.name}}&&booking={{room}}">Select Room</a>
+                </td>
+              </tr>
+            </table>
+            <br>
+          </div>
         </td>
       </tr>
       {% endfor %}

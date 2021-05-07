@@ -1,17 +1,30 @@
 {% extends 'main.html' %}
 {% block content %}
+{{bookedRmData}}
+{{bookingOldData}}
 <div class="datadiv">
-  <form method="post" action="/updatebookederoom/{{bookedRmData.bookingId}}">
+  <form method="post" action="/updatebookederoom/{{bookedRmData.bookingKey}}">
     <h3>Update Room Booking</h3>
-    <input type="hidden" value="{{bookedRmData.bookingId}}" name="bookedRmData">
+    <input type="hidden" value="{{bookedRmData}}" name="bookedRmData">
     <table>
+      {% if bookingOldData: %}
+      <input type="hidden" value="{{bookingOldData}}" name="bookingOldDataId">
+      {% else %}
+      <input type="hidden" value="novalue" name="bookingOldDataId">
+      {% endif %}
       <tr>
         <td>From Date:</td>
         <td>{{bookedRmData.startdate}}</td>
       </tr>
       <tr>
         <td>To Date:</td>
-        <td>{{bookedRmData.enddate}}/></td>
+        <td>{{bookedRmData.enddate}}</td>
+      </tr>
+      <tr>
+        <td>Room Number:</td>
+        <td>
+          {{bookedRmData.rmname}}
+        </td>
       </tr>
       <tr>
         <td>Room Type:</td>
