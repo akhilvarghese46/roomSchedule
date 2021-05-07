@@ -1,0 +1,60 @@
+{% extends 'main.html' %}
+{% block content %}
+<div class="datadiv" style="height: 45%;">
+  <form method="post" action="/editRoomBookSearchResult">
+    <h3>Edit Room Booking</h3>
+    <table style="margin-left: 0%;">
+      <tr>
+        <input type="hidden" value="{{bookedRmData[0].bookingId}}" name="bookedRmData">
+        <td>From Date:</td>
+        <td><input type="date" required name="fromDate" value="{{bookedRmData[0].startdate}}" placeholder="DD-MM-YYYY" value="{{startdate}}" /></td>
+        <td>To Date:</td>
+        <td><input type="date" required name="toDate" value="{{bookedRmData[0].enddate}}" placeholder="DD-MM-YYYY" /></td>
+        <td>Room Type:</td>
+        <td>
+          <select name="roomType" id="roomTypeId" style="width: 76%;">
+            {% if bookedRmData[0].type == "single" %}
+            <option value="single" selected>Single</option>
+            {% else %}
+            <option value="single">Single</option>
+            {% endif %}
+
+            {% if bookedRmData[0].type == "double" %}
+            <option value="double" selected>Double</option>
+            {% else %}
+            <option value="double">Double</option>
+            {% endif %}
+
+            {% if bookedRmData[0].type == "triple" %}
+            <option value="triple" selected>Triple</option>
+            {% else %}
+            <option value="triple">Triple</option>
+            {% endif %}
+            {% if bookedRmData[0].type == "queen" %}
+            <option value="queen" selected>Queen</option>
+            {% else %}
+            <option value="queen">Queen</option>
+            {% endif %}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="hidden" name="booking" value="{{bookedRmData[0]}}">
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><br></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><button class="btncreate btn" style="width: 60%;">Search Availability</button></td>
+      </tr>
+    </table>
+  </form>
+</div>
+{% endblock %}

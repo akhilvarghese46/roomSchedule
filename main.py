@@ -301,13 +301,15 @@ def getRoomBookingSearchResult():
             booking["rmType"] = rmType
             booking["rmName"] = rmname
             name_list = getBookingRoomFilterTwo(booking)
-            booking["rmPrice"] =name_list[0]["price"]
-            booking["req"] =name_list[0]["req"]
+
             if name_list:
+                booking["rmPrice"] =name_list[0]["price"]
+                booking["req"] =name_list[0]["req"]
                 return render_template("add_booking.html" ,user_data=user_data,roomData = name_list[0],booking=booking)
             else:
+                return_url = '/addroombookingSearch'
                 error_message = "An entry with same date is already exists. try with an another date/time"
-                return render_template("error.html", error_message=error_message)
+                return render_template("error.html", error_message=error_message,return_url=return_url)
 
             """return render_template("search_bookinglist.html",booking=booking ,avlRoom = name_list,user_data=user_data)"""
         except ValueError as exc:
@@ -429,16 +431,11 @@ def updateBookedRoom(bookingId=None):
 @app.route("/editbookederoom/<bookingId>", methods=["GET", "POST"])
 def editBookedRoom(bookingId=None):
     user_data =checkUserData();
-    print("-----------------------1-----------------------------")
-    print(request.method)
     if user_data != None:
-        print("-----------------------2-----------------------------")
         try:
             if bookingId:
-                print("-----------------------3-----------------------------")
-
                 name_list = getBookedRoomDetails(bookingId)
-                return render_template("edit_booking.html",user_data=user_data,bookedRmData=name_list)
+                return render_template("edit_search_booking.html",user_data=user_data,bookedRmData=name_list)
         except ValueError as exc:
             error_message = str(exc)
             return render_template("error.html", error_message=error_message)
@@ -501,6 +498,63 @@ def deleteavailableroom(id=None):
     else:
         error_message = "Page not loaded! User Data is missing"
         return render_template("error.html", error_message=error_message)
+@app.route("/editRoomBookSearchResult", methods=["GET", "POST"])
+def getRoomBookingSearchResult():
+    user_data =checkUserData();
+    if user_data != None:
+        try:
+            data = dict(request.form)
+            startDate = data.get("fromDate")
+            endDate = data.get("toDate")
+            rmType  = data.get("roomType")
+            rmbookingId = data.get("bookedRmData")
+            bookingData = data.get("booking")
+            bookingData = bookingData.replace("'", "\"")
+            bookingData=json.loads(bookingData)
+            todayDate = datetime.today()
+            fromDate=datetime.fromisoformat(startDate)
+            ToDate =datetime.fromisoformat(endDate)
+
+            oldFromDate =bookingData["startate"]
+            oldToDate =bookingData["enddate"]
+            oldFromDate=datetime.fromisoformat(oldFromDate)
+            oldToDate=datetime.fromisoformat(oldToDate)
+            oldType =bookingData["type"]
+            if(fromDate==oldFromDate and ToDate==oldToDate and rmType==oldType):
+
+                return render_template("edit_booking.html" ,user_data=user_data,bookedRmData = bookingData)
+            else:
+                if(ToDate < fromDate):
+                    return_url = '/bookedroomlist/AllType'
+                    error_message = "Check-in date should be less than Check-out Date"
+                    return render_template("error.html", error_message=error_message,return_url=return_url)
+                if(todayDate >= fromDate):
+                    return_url = '/bookedroomlist/AllType'
+                    error_message = "User can't select previous dates as checkin date"
+                    return render_template("error.html", error_message=error_message,return_url=return_url)
+                booking={}
+                booking["fromDate"] = startDate
+                booking["toDate"] = endDate
+                booking["rmType"] = rmType
+                booking["rmName"] = rmname
+                name_list = getBookingRoomFilter(booking)
+
+                if name_list:
+                    booking["rmPrice"] =name_list[0]["price"]
+                    booking["req"] =name_list[0]["req"]
+                    return render_template("edit_booking.html" ,user_data=user_data,bookedRmData = name_list[0])
+                else:
+                    return_url = '/bookedroomlist/AllType'
+                    error_message = "An entry with same date is already exists. try with an another date/time"
+                    return render_template("error.html", error_message=error_message,return_url=return_url)
+
+        except ValueError as exc:
+            error_message = str(exc)
+            return render_template("error.html", error_message=error_message)
+    else:
+        error_message = "Page not loaded! User Data is missing"
+        return render_template("index.html", user_data=user_data, error_message=error_message)
+
 
 @app.route("/singnout", methods=["GET", "POST"])
 def signOut():
