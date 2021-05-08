@@ -313,7 +313,7 @@ def getRoomBookingSearchResult():
                 return_url = '/addroombookingSearch'
                 error_message = "Check-in date should be less than Check-out Date"
                 return render_template("error.html", error_message=error_message,return_url=return_url)
-            if(todayDate >= fromDate):
+            if(todayDate > fromDate):
                 return_url = '/addroombookingSearch'
                 error_message = "User can't select previous dates as checkin date"
                 return render_template("error.html", error_message=error_message,return_url=return_url)
@@ -561,7 +561,7 @@ def editRoomBookSearchResult():
             bookingData = data.get("booking")
             bookingData = bookingData.replace("'", "\"")
             bookingData=json.loads(bookingData)
-            
+
             todayDate = datetime.today()
             fromDate=datetime.fromisoformat(startDate)
             ToDate =datetime.fromisoformat(endDate)

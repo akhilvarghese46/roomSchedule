@@ -3,14 +3,13 @@
 <div class="datadiv" style="height: 45%;">
   <form method="post" action="/editRoomBookSearchResult">
     <h3>Edit Room Booking</h3>
-    {{bookedRmData[0]}}
     <table style="margin-left: 0%;">
       <tr>
         <input type="hidden" value="{{bookedRmData[0].bookingKey}}" name="bookedRmData">
         <td>From Date:</td>
-        <td><input type="date" required name="fromDate" value="{{bookedRmData[0].startdate}}" placeholder="DD-MM-YYYY" value="{{startdate}}" /></td>
+        <td><input type="datetime-local" required name="fromDate" value="{{bookedRmData[0].startdate}}" placeholder="DD-MM-YYYY" value="{{startdate}}" /></td>
         <td>To Date:</td>
-        <td><input type="date" required name="toDate" value="{{bookedRmData[0].enddate}}" placeholder="DD-MM-YYYY" /></td>
+        <td><input type="datetime-local" required name="toDate" value="{{bookedRmData[0].enddate}}" placeholder="DD-MM-YYYY" /></td>
         <td>Room Type:</td>
         <td>
           <select name="roomType" id="roomTypeId" style="width: 76%;">

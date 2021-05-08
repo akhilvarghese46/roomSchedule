@@ -2,8 +2,6 @@
 {% block content%}
 <div class="datadiv">
   <form method="post" action="/addRoomBookToDb">
-    {{roomData}}
-    {{booking}}
     <h3>Add Room Booking</h3>
     <input type="hidden" name="booking" value="{{booking}}">
     <input type="hidden" name="roomData" value="{{roomData}}">
