@@ -5,7 +5,7 @@ from datetime import datetime
 import random
 from google.cloud import datastore
 import json
-from models import Room,Booking
+from models import Room,Booking,User
 
 app = Flask(__name__)
 datastore_client = datastore.Client()
@@ -38,7 +38,6 @@ def getAvailableRoomData():
 
 
 def getBookedRoomListDetails(bookingSearch):
-    print(bookingSearch)
     name_list = []
     if (bookingSearch):
         if(bookingSearch['rmType'] == 'AllType'):
@@ -76,9 +75,6 @@ def getBookingRoomFilter(bookData):
         for data in name_list:
             if(data['fromDate']!=None and data['toDate']!=None):
                 if((fromDate >=datetime.fromisoformat(data['fromDate']) and toDate <= datetime.fromisoformat(data['toDate']) and fromDate >=datetime.fromisoformat(data['toDate'])) or (fromDate >=datetime.fromisoformat(data['fromDate']) and toDate >= datetime.fromisoformat(data['toDate']) and fromDate >=datetime.fromisoformat(data['toDate'])) or (fromDate <= datetime.fromisoformat(data['fromDate']) and toDate <= datetime.fromisoformat(data['toDate']) and datetime.fromisoformat(data['fromDate'])>=toDate )):
-                    print(datetime.fromisoformat(data['fromDate']))
-                    print(datetime.fromisoformat(data['toDate']))
-                    print(data)
                     newname_list.append(data)
             else:
                 newname_list.append(data)
@@ -137,6 +133,31 @@ def getRoomDetails(rmname):
     else:
         return render_template("error.html", error_message="No data found")
     return enitity_exists
+
+def getUserDetails(bookingId):
+    entity_key = datastore_client.key("UserDetails", bookingId)
+    enitity_exists = datastore_client.get(key=entity_key)
+    if enitity_exists:
+        enitity_exists = dict(enitity_exists)
+        enitity_exists["bookingId"] = bookingId
+    else:
+        return render_template("error.html", error_message="No data found")
+    return enitity_exists
+
+def addUserDetails(userDetails):
+    entity_key = datastore_client.key("UserDetails", userDetails["bookingKey"])
+    entity = datastore.Entity(key=entity_key)
+    userDetails = User(username=userDetails["userName"], email=userDetails["userEmail"], age=userDetails["userAge"], contactnum=userDetails["userNumber"], gender=userDetails["userGender"], bookingId=userDetails["bookingKey"])
+    entity.update(userDetails.__dict__)
+    datastore_client.put(entity)
+
+def updateUserDetails(userDetails):
+    entity_key = datastore_client.key("UserDetails", userDetails["bookingKey"])
+    entity = datastore.Entity(key=entity_key)
+    userDetails = User(username=userDetails["userName"], email=userDetails["userEmail"], age=userDetails["userAge"], contactnum=userDetails["userNumber"], gender=userDetails["userGender"], bookingId=userDetails["bookingKey"])
+    obj = userDetails.__dict__
+    entity.update(obj)
+    datastore_client.put(entity)
 
 #root function is a default function
 @app.route('/')
@@ -247,7 +268,7 @@ def editAvailableRoom(name=None):
                             return render_template("available_roomdetails.html", data=obj)
 
                         except Exception as e:
-                            print(e)
+
                             return render_template("error.html", error_message=str(e))
             return render_template("edit_room.html")
         except ValueError as exc:
@@ -356,15 +377,23 @@ def addRoomBookToDb():
             roomData=json.loads(roomData)
             """
 
+            userDetails={}
+            userDetails["userName"] = data.get("userName")
+            userDetails["userAge"] = data.get("userAge")
+            userDetails["userNumber"] = data.get("userNumber")
+            userDetails["userGender"] = data.get("userGender")
+            userDetails["userEmail"] = user_data['email']
 
             name =booking["rmName"]
             bookingKey = name+"|"+booking['fromDate']+"|"+booking['toDate']+"|"+user_data['email']
+            userDetails["bookingKey"] = bookingKey
             entity_key = datastore_client.key("BookingRoomList",bookingKey)
             entity = datastore.Entity(key=entity_key)
             booking = Booking(bookingKey=bookingKey, rmname= name, type = booking["rmType"], price=booking["rmPrice"], req = booking["req"],adduserfecilitiese=data.get("addUserReq"), startdate =booking['fromDate'], enddate=booking['toDate'], loginusername = user_data['email'])
             entity.update(booking.__dict__)
             datastore_client.put(entity)
             name_list = getBookedRoomDetailsData()
+            addUserDetails(userDetails)
             return render_template("search_bookinglist.html" ,avlRoom=name_list)
         except ValueError as exc:
             error_message = str(exc)
@@ -403,7 +432,7 @@ def updateBookedRoom(bookingId=None):
             booking=json.loads(bookingdata)
             oldstartdate = booking['startdate']
             oldtodate = booking['enddate']
-            print(booking['bookingKey'])
+
             bookingOldDataId = data.get("bookingOldDataId")
             if(bookingOldDataId != "novalue"):
                 entity_key_old = datastore_client.key("BookingRoomList", bookingOldDataId)
@@ -421,9 +450,17 @@ def updateBookedRoom(bookingId=None):
                     entity_key_old = datastore_client.key("BookingRoomList", bookingKey)
                     datastore_client.delete(key=entity_key_old)
                     """
+            userDetails={}
+            userDetails["userName"] = data.get("userName")
+            userDetails["userAge"] = data.get("userAge")
+            userDetails["userNumber"] = data.get("userNumber")
+            userDetails["userGender"] = data.get("userGender")
+            userDetails["userEmail"] = user_data['email']
             bookingId = booking['bookingKey']
             if (booking['bookingKey']== 'nobookingid'):
                 bookingId = booking['rmname']+"|"+booking['startdate']+"|"+booking['enddate']+"|"+user_data['email']
+            userDetails["bookingKey"] = bookingId
+            updateUserDetails(userDetails)
             entity_key = datastore_client.key("BookingRoomList", bookingId)
             entity = datastore.Entity(key=entity_key)
             bookingObj = Booking(bookingKey=bookingId, rmname= booking['rmname'], type = booking["type"], price=booking["price"], req = booking['req'],adduserfecilitiese=data.get("addReq"), startdate =booking['startdate'], enddate=booking['enddate'], loginusername = user_data['email'])
@@ -492,7 +529,7 @@ def deleteavailableroom(id=None):
                     query_2 = query_2.add_filter('rmname', '=', id).fetch()
                     for i in query_2:
                         name_list.append(dict(i))
-                print(len(name_list))
+
                 if(len(name_list)==0):
                     entity_key = datastore_client.key("Room", id)
                     datastore_client.delete(key=entity_key)
@@ -524,7 +561,7 @@ def editRoomBookSearchResult():
             bookingData = data.get("booking")
             bookingData = bookingData.replace("'", "\"")
             bookingData=json.loads(bookingData)
-            print(bookingData)
+            
             todayDate = datetime.today()
             fromDate=datetime.fromisoformat(startDate)
             ToDate =datetime.fromisoformat(endDate)
@@ -534,9 +571,9 @@ def editRoomBookSearchResult():
             oldFromDate=datetime.fromisoformat(oldFromDate)
             oldToDate=datetime.fromisoformat(oldToDate)
             oldType =bookingData["type"]
+            userDetails = getUserDetails(rmbookingId)
             if(fromDate==oldFromDate and ToDate==oldToDate and rmType==oldType):
-                print("=================================================")
-                return render_template("edit_booking.html" ,user_data=user_data,bookedRmData = bookingData)
+                return render_template("edit_booking.html" ,user_data=user_data,bookedRmData = bookingData, userDetails=userDetails)
             else:
                 """
                 if((oldFromDate != fromDate) or (oldToDate!= ToDate) or(rmType!=oldType) ):
@@ -575,7 +612,7 @@ def editRoomBookSearchResult():
                     name_list[0]["rmname"] = name_list[0]["name"]
 
                     name_list[0]["bookingKey"] = "nobookingid"
-                    return render_template("edit_booking.html" ,user_data=user_data,bookedRmData = name_list[0],bookingOldData=rmbookingId)
+                    return render_template("edit_booking.html" ,user_data=user_data,bookedRmData = name_list[0],bookingOldData=rmbookingId,userDetails=userDetails)
                 else:
                     return_url = '/bookedroomlist/AllType'
                     error_message = "An entry with same date is already exists. try with an another date/time, \n OR \n No room available for '"+rmType+"' room type"

@@ -1,7 +1,6 @@
 {% extends 'main.html' %}
 {% block content %}
-{{bookedRmData}}
-{{bookingOldData}}
+
 <div class="datadiv">
   <form method="post" action="/updatebookederoom/{{bookedRmData.bookingKey}}">
     <h3>Update Room Booking</h3>
@@ -40,6 +39,45 @@
         <td>Additional Facilities:</td>
         <td><label name="lblrmreq">{{bookedRmData.req}}</td>
       </tr>
+      <br>
+      <tr>
+        <td>
+          <h3><b>Update User Details</b></h3>
+        </td>
+        <td>
+        </td>
+      </tr>
+      <br>
+      <tr>
+        <td>User Name:</td>
+        <td><input type="text" required name="userName" value="{{userDetails.username}}" placeholder="User Name" /></td>
+      </tr>
+      <tr>
+        <td>Age:</td>
+        <td><input type="text" required name="userAge" value="{{userDetails.age}}" placeholder="User Age" /></td>
+      </tr>
+      <tr>
+        <td>Contact Number:</td>
+        <td><input type="text" required name="userNumber" value="{{userDetails.contactnum}}" placeholder="User Number" /></td>
+      </tr>
+      <tr>
+        <td>Gender</td>
+        <td>
+          <select name="userGender" id="userGender" style="width: 26%;">
+            {% if userDetails.gender == "male" %}
+            <option value="male" selected>male</option>
+            {% else %}
+            <option value="male">male</option>
+            {% endif %}
+            {% if userDetails.gender == "female" %}
+            <option value="female" selected>female</option>
+            {% else %}
+            <option value="female">female</option>
+            {% endif %}
+          </select>
+        </td>
+      </tr>
+
       <tr>
         <td>Additional User Requirements:</td>
         <td><textarea id="addReq" name="addReq" value="{{bookedRmData.adduserfecilitiese}}" rows="4" cols="50" maxlength="150"></textarea></td>

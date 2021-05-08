@@ -44,9 +44,9 @@
         <form method="post" action="">
           <table border="1" style="width:90%">
             <colgroup>
-              <col span="1" style="width: 30%;">
-              <col span="1" style="width: 28%;">
-              <col span="1" style="width: 35%;">
+              <col span="1" style="width: 15%;">
+              <col span="1" style="width: 15%;">
+              <col span="1" style="width: 15%;">
               <!---<col span="1" style="width: 25%;">
             <col span="1" style="width: 25%;">
             <col span="1" style="width: 25%;">
@@ -59,6 +59,7 @@
               <th>Room Name</th>
               <th>Room Price</th>
               <th>Room Type</th>
+              <th></th>
 
             </tr>
             {% if rooms|length == 0 %}
@@ -72,6 +73,11 @@
               <td> {{room.name}}</td>
               <td>{{room.price}}</td>
               <td>{{room.type}}</td>
+
+              <td>
+                <a class="anglebutton" style="width: 30%;background: white;color: black;" href="/addRoomBook?room={{room.name}}&&booking={{room}}">Select Room</a>
+              </td>
+
             </tr>
             {% endfor %}
             {%endif%}

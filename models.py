@@ -13,9 +13,13 @@ class Room():
 
 
 class User():
-    def __init__(self, name, email):
-        self.name = name
+    def __init__(self, username, email, age, contactnum, gender, bookingId):
+        self.username = username
         self.email = email
+        self.age = age
+        self.contactnum = contactnum
+        self.gender = gender
+        self.bookingId = bookingId
 
     def set_properties(self, name, value):
         setattr(self, name, value)
