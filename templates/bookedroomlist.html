@@ -45,7 +45,7 @@
         <td>{{room.loginusername}}</td>
         <td>{{room.startdate}}</td>
         <td>{{room.enddate}}</td>
-        {%if userdata['email']==room.loginusername%}
+        {%if user_data['email']==room.loginusername%}
         <td><a href="/editbookederoom/{{room.bookingKey}}">&#x270D;</a></td>
         <td><a href="/deletebookederoom/{{room.bookingKey}}"> &#10060;</a></td>
         {% else: %}

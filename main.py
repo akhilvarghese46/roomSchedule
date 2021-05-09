@@ -217,7 +217,7 @@ def getAvailableRoomDetails(name=None):
                 if enitity_exists:
                     enitity_exists = dict(enitity_exists)
                     enitity_exists["name"] = name
-                    return render_template("available_roomdetails.html", data=enitity_exists)
+                    return render_template("available_roomdetails.html", data=enitity_exists,user_data=user_data)
                 else:
                     return render_template("error.html", error_message="No data found")
         except ValueError as exc:
@@ -239,7 +239,7 @@ def editAvailableRoom(name=None):
                     enitity_exists = dict(enitity_exists)
                     enitity_exists["name"] = name
                     if request.method == "GET":
-                        return render_template("edit_room.html", data=enitity_exists)
+                        return render_template("edit_room.html", data=enitity_exists,user_data=user_data)
                     else:
                         try:
                             data = dict(request.form)
@@ -261,7 +261,7 @@ def editAvailableRoom(name=None):
                             entity.update(obj)
                             datastore_client.put(entity)
                             obj["name"] = editedname
-                            return render_template("available_roomdetails.html", data=obj)
+                            return render_template("available_roomdetails.html", data=obj, user_data=user_data)
 
                         except Exception as e:
 
@@ -385,7 +385,7 @@ def addRoomBookToDb():
             datastore_client.put(entity)
             name_list = getBookedRoomDetailsData()
             addUserDetails(userDetails)
-            return render_template("search_bookinglist.html" ,avlRoom=name_list)
+            return render_template("search_bookinglist.html" ,avlRoom=name_list,user_data=user_data)
         except ValueError as exc:
             error_message = str(exc)
             return render_template("error.html", error_message=error_message)
@@ -404,7 +404,7 @@ def getBookedRoomList(type):
             if(data.get("roomType") != 'AllType' and data.get("roomType") != None):
                 bookingSearch["rmType"] = data.get("roomType")
             name_list=getBookedRoomListDetails(bookingSearch);
-            return render_template("bookedroomlist.html" ,userdata=user_data, BookedRoomData=name_list)
+            return render_template("bookedroomlist.html" ,user_data=user_data, BookedRoomData=name_list)
         except ValueError as exc:
             error_message = str(exc)
             return render_template("error.html", error_message=error_message)
@@ -429,18 +429,7 @@ def updateBookedRoom(bookingId=None):
                 entity_key_old = datastore_client.key("BookingRoomList", bookingOldDataId)
                 datastore_client.delete(key=entity_key_old)
 
-            """
-            if((oldstartdate != data.get("fromDate")) or (oldtodate!= data.get("toDate")) ):
-                bookingKey = booking['rmname']+"|"+data.get("fromDate")+"|"+data.get("toDate")+"|"+user_data['email']
-                entity_key = datastore_client.key("BookingRoomList", bookingKey)
-                enitity_exists = datastore_client.get(key=entity_key)
-                if enitity_exists:
-                    error_message = "an entry with same name already exists. try with an another name"
-                    return render_template("error.html", error_message=error_message)
-                else:
-                    entity_key_old = datastore_client.key("BookingRoomList", bookingKey)
-                    datastore_client.delete(key=entity_key_old)
-                    """
+
             userDetails={}
             userDetails["userName"] = data.get("userName")
             userDetails["userAge"] = data.get("userAge")
@@ -461,7 +450,7 @@ def updateBookedRoom(bookingId=None):
             datastore_client.put(entity)
             bookingSearch={}
             name_list=getBookedRoomListDetails(bookingSearch);
-            return render_template("bookedroomlist.html" ,userdata=user_data, BookedRoomData=name_list)
+            return render_template("bookedroomlist.html" ,user_data=user_data, BookedRoomData=name_list)
         except ValueError as exc:
             error_message = str(exc)
             return render_template("error.html", error_message=error_message)
@@ -493,9 +482,11 @@ def deleteBookedRoom(id=None):
                 name_list = []
                 entity_key = datastore_client.key("BookingRoomList", id)
                 datastore_client.delete(key=entity_key)
+                entity_key = datastore_client.key("UserDetails", id)
+                datastore_client.delete(key=entity_key)
                 bookingSearch={}
                 name_list=getBookedRoomListDetails(bookingSearch);
-                return render_template("bookedroomlist.html", userdata=user_data, BookedRoomData=name_list)
+                return render_template("bookedroomlist.html", user_data=user_data, BookedRoomData=name_list)
             else:
                 error_message = "Page not loaded! User Data is missing"
                 return render_template("error.html", error_message=error_message)
@@ -566,18 +557,7 @@ def editRoomBookSearchResult():
             if(fromDate==oldFromDate and ToDate==oldToDate and rmType==oldType):
                 return render_template("edit_booking.html" ,user_data=user_data,bookedRmData = bookingData, userDetails=userDetails)
             else:
-                """
-                if((oldFromDate != fromDate) or (oldToDate!= ToDate) or(rmType!=oldType) ):
-                    bookingKey = bookingData['rmname']+"|"+str(fromDate)+"|"+str(ToDate)+"|"+user_data['email']
-                    entity_key = datastore_client.key("BookingRoomList", bookingKey)
-                    enitity_exists = datastore_client.get(key=entity_key)
-                    if enitity_exists:
-                        return_url = '/bookedroomlist/AllType'
-                        error_message = "an entry with same name already exists. try with an another name"
-                        return render_template("error.html", error_message=error_message,return_url=return_url)
-                    else:
-                        entity_key_old = datastore_client.key("BookingRoomList", bookingKey)
-                        datastore_client.delete(key=entity_key_old)"""
+
                 if(ToDate < fromDate):
                     return_url = '/bookedroomlist/AllType'
                     error_message = "Check-in date should be less than Check-out Date"
