@@ -31,10 +31,6 @@ def getAvailableRoomData():
     for i in query:
         name_list.append(dict(i))
     return name_list
-    """query_2 = datastore_client.query(kind="BookingRoomList").fetch()
-    for i in query:
-        name_list.append(dict(i))
-    return name_list"""
 
 
 def getBookedRoomListDetails(bookingSearch):
