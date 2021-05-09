@@ -356,12 +356,8 @@ def setRoomBooking():
     return render_template("search_booking.html",rmname=rmname,booking=booking)
 
 
-
-
-
 @app.route("/addRoomBookToDb", methods=["GET", "POST"])
 def addRoomBookToDb():
-
     user_data =checkUserData();
     if user_data != None:
         try:
@@ -369,7 +365,6 @@ def addRoomBookToDb():
             bookingdata = data.get("booking")
             bookingdata = bookingdata.replace("'", "\"")
             booking=json.loads(bookingdata)
-
             roomData = data.get("roomData")
 
             """roomData = roomData.replace("'", "\"")
